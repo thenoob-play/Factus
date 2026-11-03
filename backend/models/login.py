@@ -3,7 +3,7 @@
 from fastapi import APIRouter, HTTPException, status
 
 # Importamos las clases de los esquemas
-from backend.shemas.usuario import UsuarioClienteCreate , loginUsarioCreate, UsuarioTrabajadorCreate  
+from backend.schemas.usuario import UsuarioClienteCreate , loginUsarioCreate, UsuarioTrabajadorCreate  
   
 # Importamos las funciones directamente del servicio
 

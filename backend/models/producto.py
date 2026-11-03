@@ -2,7 +2,7 @@
 from fastapi import APIRouter, HTTPException, status
 
 # Importamos el esquema usado por esta ruta.
-from backend.shemas.producto import ProductoCreate
+from backend.schemas.producto import ProductoCreate
   
 # Importamos las funciones directamente del servicio
 

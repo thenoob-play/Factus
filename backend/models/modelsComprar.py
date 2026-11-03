@@ -1,7 +1,7 @@
 import logging
 
 from fastapi import APIRouter, Header, HTTPException, status
-from backend.shemas.compra import CompraCreate
+from backend.schemas.compra import CompraCreate
 from backend.services.servicesCompra import (
     CompraConflictoError,
     CompraNoEncontradaError,
