@@ -9,15 +9,7 @@ def validar_datos_factura(datos: dict[str, Any]) -> bool:
     if not isinstance(datos, dict):
         raise ValueError("El parámetro 'datos' debe ser un diccionario.")
 
-    campos_requeridos = (
-        "document_type_id",
-        "numbering_range_id",
-        "reference_code",
-        "payment_form",
-        "payment_method_code",
-        "customer",
-        "items",
-    )
+    campos_requeridos = ("document", "reference_code", "payment_details", "customer", "items")
     for campo in campos_requeridos:
         if datos.get(campo) is None or datos.get(campo) == "":
             raise ValueError(
@@ -29,15 +21,27 @@ def validar_datos_factura(datos: dict[str, Any]) -> bool:
         raise ValueError("El campo 'customer' debe ser un objeto.")
     for campo in (
         "identification",
-        "names",
-        "email",
         "identification_document_code",
-        "municipality_id",
+        "legal_organization_code",
     ):
         if not customer.get(campo):
             raise ValueError(
                 f"El campo del cliente '{campo}' es obligatorio y no puede estar vacío."
             )
+    organization_code = str(customer["legal_organization_code"])
+    customer_name_field = "company" if organization_code == "1" else "names"
+    if organization_code not in {"1", "2"} or not customer.get(customer_name_field):
+        raise ValueError("El nombre o razón social del cliente no es válido.")
+
+    payment_details = datos["payment_details"]
+    if not isinstance(payment_details, list) or not payment_details:
+        raise ValueError("La factura debe incluir al menos un medio de pago.")
+    for index, payment in enumerate(payment_details, start=1):
+        if not isinstance(payment, dict) or not all(
+            payment.get(field)
+            for field in ("payment_form", "payment_method_code", "amount")
+        ):
+            raise ValueError(f"El medio de pago #{index} no está completo.")
 
     items = datos["items"]
     if isinstance(items, dict):
@@ -46,7 +50,15 @@ def validar_datos_factura(datos: dict[str, Any]) -> bool:
         raise ValueError("La factura debe incluir al menos un ítem en 'items'.")
 
     for index, item in enumerate(items, start=1):
-        if not isinstance(item, dict) or not item.get("name"):
+        if not isinstance(item, dict) or not all(
+            item.get(field)
+            for field in (
+                "code_reference",
+                "name",
+                "unit_measure_code",
+                "standard_code",
+            )
+        ):
             raise ValueError(f"El ítem #{index} no tiene un nombre válido.")
         try:
             quantity = Decimal(str(item.get("quantity")))

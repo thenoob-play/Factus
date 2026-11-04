@@ -14,10 +14,10 @@ class Settings(BaseSettings):
     FACTUS_USERNAME: str | None = None
     FACTUS_PASSWORD: str | None = None
     FACTUS_DOCUMENT_TYPE_ID: int = 1
-    FACTUS_NUMBERING_RANGE_ID: int | None = None
+    FACTUS_NUMBERING_RANGE_ID: int | None = Field(default=None, gt=0)
     FACTUS_PAYMENT_FORM: int = 1
     FACTUS_PAYMENT_METHOD_CODE: str = "10"
-    FACTUS_TRIBUTE_CODE: str = "21"
+    FACTUS_TRIBUTE_CODE: str = "ZZ"
     FACTUS_DEFAULT_MUNICIPALITY_ID: str | None = None
     FACTUS_MUNICIPALITIES_URL: str = (
         "https://developers.factus.com.co/tablas-de-referencia/municipios"

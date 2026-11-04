@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 @router.post("/Comprar", status_code=status.HTTP_201_CREATED, response_model=dict)
 def comprar(
-    usuario: CompraCreate,
+    compra: CompraCreate,
     idempotency_key: str = Header(
         min_length=1,
         max_length=128,
@@ -22,7 +22,7 @@ def comprar(
         description="Clave única que debes reutilizar al reintentar la misma compra.",
     ),
 ) -> dict:
-    datos_dict = usuario.model_dump() # Esto incluirá el idusuario y la lista de items
+    datos_dict = compra.model_dump()
 
     try:
         resultado = servicio_crear_compra(datos_dict, idempotency_key)

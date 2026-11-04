@@ -5,7 +5,6 @@ import re
 import threading
 import time
 import unicodedata
-from datetime import date
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from html.parser import HTMLParser
 from typing import Any
@@ -162,6 +161,130 @@ def _response_detail(response: requests.Response) -> Any:
         return response.json()
     except ValueError:
         return {"message": response.text[:4000] or "Respuesta vacía de Factus."}
+
+
+def validar_rango_numeracion_factus() -> int:
+    """Valida que el rango configurado exista y esté activo en la cuenta Factus."""
+    range_id = settings.FACTUS_NUMBERING_RANGE_ID
+    if range_id is None:
+        raise FactusConfigurationError(
+            "Configura FACTUS_NUMBERING_RANGE_ID con el ID de un rango activo de facturas."
+        )
+
+    token = obtener_token()
+    try:
+        response = requests.get(
+            f"{_factus_base_url()}/v2/numbering-ranges/{range_id}",
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Accept": "application/json",
+            },
+            timeout=30,
+        )
+    except requests.Timeout as error:
+        logger.warning("Factus numbering-range request timed out.")
+        raise FactusIntegrationError(
+            502, {"message": "Tiempo de espera agotado al validar el rango de numeración."}
+        ) from error
+    except requests.RequestException as error:
+        logger.warning("Factus numbering-range request failed: %s", type(error).__name__)
+        raise FactusIntegrationError(
+            502, {"message": "No fue posible validar el rango de numeración en Factus."}
+        ) from error
+
+    if response.status_code == 401:
+        global _TOKEN, _TOKEN_EXPIRES_AT
+        with _TOKEN_LOCK:
+            _TOKEN = None
+            _TOKEN_EXPIRES_AT = 0.0
+        raise FactusIntegrationError(
+            502,
+            {"provider_status": 401, "factus": _response_detail(response)},
+            401,
+        )
+    if response.status_code == 403:
+        raise FactusIntegrationError(
+            502,
+            {
+                "message": (
+                    "Factus denegó el acceso al rango de numeración. "
+                    "Verifica los permisos de la cuenta y sus credenciales."
+                ),
+                "factus": _response_detail(response),
+            },
+            403,
+        )
+    if response.status_code == 404:
+        raise FactusConfigurationError(
+            f"FACTUS_NUMBERING_RANGE_ID={range_id} no existe o no está disponible "
+            "en esta cuenta de Factus."
+        )
+    if not response.ok:
+        detail = _response_detail(response)
+        logger.warning("Factus numbering-range detail returned HTTP %s.", response.status_code)
+        raise FactusIntegrationError(502, detail, response.status_code)
+
+    try:
+        response_data = response.json()
+    except ValueError as error:
+        raise FactusIntegrationError(
+            502, {"message": "Factus devolvió una respuesta de rangos inválida."}
+        ) from error
+
+    range_data: Any = response_data
+    while isinstance(range_data, dict) and "id" not in range_data:
+        nested_data = range_data.get("data")
+        if nested_data is None:
+            nested_data = range_data.get("numbering_range", range_data.get("range"))
+        if nested_data is range_data or nested_data is None:
+            break
+        range_data = nested_data
+
+    if isinstance(range_data, list):
+        range_data = next(
+            (
+                entry
+                for entry in range_data
+                if isinstance(entry, dict)
+                and str(entry.get("id")) == str(range_id)
+            ),
+            None,
+        )
+    if not isinstance(range_data, dict):
+        logger.warning("Factus numbering-range response did not contain a range object.")
+        raise FactusConfigurationError(
+            f"Factus no devolvió datos para FACTUS_NUMBERING_RANGE_ID={range_id}. "
+            "Comprueba que el ID esté activo, pertenezca a esta cuenta y que la cuenta "
+            "tenga permiso para consultarlo."
+        )
+
+    if "id" not in range_data:
+        raise FactusConfigurationError(
+            f"Factus no devolvió el rango FACTUS_NUMBERING_RANGE_ID={range_id}. "
+            "Comprueba que el ID esté activo, pertenezca a esta cuenta y que la cuenta "
+            "tenga permiso para consultarlo."
+        )
+    if str(range_data["id"]) != str(range_id):
+        raise FactusIntegrationError(
+            502,
+            {"message": "Factus devolvió un rango distinto al solicitado."},
+        )
+
+    range_name = range_data.get("document_name") or range_data.get("document") or ""
+    document_name = _normalize(str(range_name))
+    is_invoice_range = "FACTURA" in document_name or str(range_data.get("document")) == "21"
+    if (
+        str(range_data.get("is_active")).lower() not in {"true", "1"}
+        or str(range_data.get("is_expired")).lower() not in {"false", "0"}
+        or not is_invoice_range
+    ):
+        raise FactusConfigurationError(
+            f"FACTUS_NUMBERING_RANGE_ID={range_id} no corresponde a un rango activo "
+            "y vigente de facturación en esta cuenta. Consulta GET /v2/numbering-ranges "
+            "y configura el ID devuelto por Factus."
+        )
+
+    return int(range_id)
 
 
 def _download_reference_catalog(url: str, catalog_key: str) -> list[dict[str, Any]]:
@@ -343,6 +466,23 @@ def _money_text(value: Decimal) -> str:
     return format(_money(value), ".2f")
 
 
+def _nit_identification(raw_identification: str) -> tuple[str, str]:
+    nit_parts = re.fullmatch(r"(\d+)[-\s](\d)", raw_identification)
+    if nit_parts:
+        nit_number, supplied_dv = nit_parts.groups()
+    elif re.fullmatch(r"\d{10}", raw_identification):
+        nit_number, supplied_dv = raw_identification[:-1], raw_identification[-1]
+    elif re.fullmatch(r"\d{1,15}", raw_identification):
+        nit_number, supplied_dv = raw_identification, None
+    else:
+        raise ValueError("El NIT del cliente tiene un formato inválido.")
+
+    dv = str(calcular_dv_nit(nit_number))
+    if supplied_dv is not None and supplied_dv != dv:
+        raise ValueError("El dígito de verificación del NIT no es válido.")
+    return nit_number, dv
+
+
 def construir_payload_factus(
     usuario: dict[str, Any],
     productos: list[tuple[dict[str, Any], int]],
@@ -358,46 +498,45 @@ def construir_payload_factus(
     if tipo_persona not in {"natural", "juridica"}:
         raise ValueError("El tipo de persona del cliente no es válido.")
     if tipo_persona == "juridica":
-        document_code = "6"
-        identification = str(usuario.get("numero_documeto_nit", "")).strip()
-        nit_parts = re.fullmatch(r"(\d+)[-\s](\d)", identification)
-        if nit_parts:
-            nit_number, supplied_dv = nit_parts.groups()
-        elif re.fullmatch(r"\d{10}", identification):
-            # SUPUESTO: Un NIT de 10 dígitos sin separador incluye el DV al final.
-            nit_number, supplied_dv = identification[:-1], identification[-1]
-        elif re.fullmatch(r"\d{1,15}", identification):
-            nit_number, supplied_dv = identification, None
-        else:
-            raise ValueError("El NIT del cliente tiene un formato inválido.")
-        identification = nit_number
-        dv = str(calcular_dv_nit(nit_number))
-        if supplied_dv is not None and supplied_dv != dv:
-            raise ValueError("El dígito de verificación del NIT no es válido.")
-        legal_organization_id = "1"
+        document_code = "31"
+        identification, dv = _nit_identification(
+            str(usuario.get("numero_documeto_nit", "")).strip()
+        )
+        legal_organization_code = "1"
     else:
-        document_types = {"CC": "3", "TI": "2", "CE": "5"}
+        document_types = {"CC": "13", "TI": "12", "CE": "22", "NIT": "31"}
         tipo_documento = str(usuario.get("tipo_documento") or "").upper()
         if tipo_documento not in document_types:
             raise ValueError("El tipo de documento del cliente no es válido para Factus.")
         document_code = document_types[tipo_documento]
         identification = str(usuario.get("numero_documeto_nit", "")).strip()
-        dv = None
-        legal_organization_id = "2"
+        if tipo_documento == "NIT":
+            identification, dv = _nit_identification(identification)
+        else:
+            dv = None
+        legal_organization_code = "2"
 
     customer: dict[str, Any] = {
         "identification_document_code": document_code,
         "identification": identification,
-        "names": str(usuario.get("nombre", "")).strip(),
-        "email": str(usuario.get("correo", "")).strip(),
-        "address": str(usuario.get("direccion", "")).strip(),
-        "phone": str(usuario.get("telefono_celular", "")).strip(),
-        "legal_organization_id": legal_organization_id,
+        "legal_organization_code": legal_organization_code,
         "tribute_code": settings.FACTUS_TRIBUTE_CODE,
-        "municipality_id": obtener_municipio_id(
-            str(usuario.get("municipio_departamento", ""))
-        ),
     }
+    customer_name = str(usuario.get("nombre", "")).strip()
+    customer[
+        "company" if tipo_persona == "juridica" else "names"
+    ] = customer_name
+    for field, source_field in (
+        ("email", "correo"),
+        ("address", "direccion"),
+        ("phone", "telefono_celular"),
+    ):
+        value = str(usuario.get(source_field) or "").strip()
+        if value:
+            customer[field] = value
+    municipality = str(usuario.get("municipio_departamento") or "").strip()
+    if municipality:
+        customer["municipality_code"] = obtener_municipio_id(municipality)
     if dv is not None:
         customer["dv"] = dv
 
@@ -425,20 +564,15 @@ def construir_payload_factus(
         total_discount += discount_amount
         total_tax += tax_amount
 
-        taxes: list[dict[str, str]] = []
-        if tax_rate > 0:
-            taxes.append(
-                {
-                    "code": "01",
-                    "tax_amount": _money_text(tax_amount),
-                    "percent": _money_text(tax_rate),
-                    "taxable_amount": _money_text(taxable_amount),
-                    "rate": _money_text(tax_rate),
-                }
-            )
+        taxes: list[dict[str, Any]] = [
+            {
+                "code": "01",
+                "rate": _money_text(tax_rate),
+                "is_excluded": tax_rate == 0,
+            }
+        ]
 
         product_id = product.get("idproductos", product.get("idproducto"))
-        product_code = product.get("codigo_interno") or product_id
         unspsc_code = str(product.get("codigo_UNSPSC", "")).strip()
         if not re.fullmatch(r"\d{8}", unspsc_code):
             raise ValueError(
@@ -446,16 +580,13 @@ def construir_payload_factus(
             )
         factus_items.append(
             {
-                "code_reference": str(product_code),
+                "code_reference": unspsc_code,
                 "name": str(product.get("nombre", "")).strip(),
-                "quantity": quantity,
+                "quantity": str(quantity),
                 "price": _money_text(unit_price),
                 "discount_rate": _money_text(discount_rate),
-                "tax_rate": _money_text(tax_rate),
                 "unit_measure_code": _unit_code(str(product.get("Uni_medida", ""))),
-                # Factus standard_code indica el estándar, no el código de producto.
                 "standard_code": "001",
-                "is_excluded": 1 if tax_rate == 0 else 0,
                 "taxes": taxes,
             }
         )
@@ -474,24 +605,18 @@ def construir_payload_factus(
     total_discount = _money(total_discount)
     total_tax = _money(total_tax)
     total = _money(subtotal - total_discount + total_tax)
-    today = date.today().isoformat()
     payment_details = [
         {
-            "payment_form": settings.FACTUS_PAYMENT_FORM,
-            "payment_method_code": settings.FACTUS_PAYMENT_METHOD_CODE,
-            "payment_due_date": today,
-            "payment_duration": "0",
+            "payment_form": str(settings.FACTUS_PAYMENT_FORM),
+            "payment_method_code": str(settings.FACTUS_PAYMENT_METHOD_CODE),
             "amount": _money_text(total),
         }
     ]
 
     payload = {
-        "document_type_id": settings.FACTUS_DOCUMENT_TYPE_ID,
+        "document": f"{settings.FACTUS_DOCUMENT_TYPE_ID:02d}",
         "numbering_range_id": settings.FACTUS_NUMBERING_RANGE_ID,
         "reference_code": reference_code,
-        "payment_form": settings.FACTUS_PAYMENT_FORM,
-        "payment_method_code": settings.FACTUS_PAYMENT_METHOD_CODE,
-        "payment_due_date": today,
         "payment_details": payment_details,
         "customer": customer,
         "items": factus_items,
@@ -564,10 +689,19 @@ def crear_factura_factus(payload: dict[str, Any]) -> dict[str, Any]:
         detail = _response_detail(response)
         logger.info("Factus rejected invoice validation with HTTP 422.")
         raise FactusIntegrationError(400, detail, 422)
+    if response.status_code == 409:
+        detail = _response_detail(response)
+        logger.warning("Factus invoice endpoint returned HTTP 409 conflict.")
+        raise FactusIntegrationError(409, detail, 409)
+    if response.status_code == 429:
+        detail = _response_detail(response)
+        logger.warning("Factus rate-limited an invoice request.")
+        raise FactusIntegrationError(503, detail, 429)
     if not response.ok:
         detail = _response_detail(response)
         logger.warning("Factus invoice endpoint returned HTTP %s.", response.status_code)
-        raise FactusIntegrationError(400, detail, response.status_code)
+        local_status = 400 if response.status_code == 400 else 502
+        raise FactusIntegrationError(local_status, detail, response.status_code)
 
     try:
         return response.json()

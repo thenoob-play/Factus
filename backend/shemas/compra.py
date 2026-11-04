@@ -1,11 +1,14 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
-# Submodelo para cada producto individual dentro de la compra
 class DetalleCompra(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+
     idproducto: int = Field(gt=0)
     cantidad: int = Field(gt=0)
 
-# Modelo principal que incluye el usuario y la lista de productos
+
 class CompraCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+
     idusuario: int = Field(gt=0)
     items: list[DetalleCompra] = Field(min_length=1)

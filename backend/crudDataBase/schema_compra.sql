@@ -1,8 +1,17 @@
 CREATE TABLE `compra` (
   `idcompra` int NOT NULL AUTO_INCREMENT,
   `idusuario` int NOT NULL,
+  `idempotency_key` varchar(128) DEFAULT NULL,
+  `request_hash` char(64) DEFAULT NULL,
+  `factus_reference_code` varchar(64) DEFAULT NULL,
+  `factus_source` json DEFAULT NULL,
+  `factus_payload` json DEFAULT NULL,
+  `factus_totales` json DEFAULT NULL,
+  `factus_response` json DEFAULT NULL,
+  `factus_estado` enum('pendiente','error','emitida') NOT NULL DEFAULT 'pendiente',
   `fecha_compra` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`idcompra`),
+  UNIQUE KEY `uk_compra_idempotency` (`idusuario`,`idempotency_key`),
   KEY `fk_compra_usuario_idx` (`idusuario`),
   CONSTRAINT `fk_compra_usuario` FOREIGN KEY (`idusuario`)
     REFERENCES `usuario` (`idusuario`)
