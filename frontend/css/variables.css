@@ -1,0 +1,159 @@
+/* ==========================================================================
+   Sistema de diseño — tokens
+   Verde petróleo como primario (confianza, dinero) sobre neutros cálidos.
+   ========================================================================== */
+:root {
+  color-scheme: light;
+
+  /* Marca */
+  --c-primary: #0e6b5c;
+  --c-primary-hover: #0a594c;
+  --c-primary-press: #08493e;
+  --c-primary-soft: #e2f0ec;
+  --c-primary-ink: #ffffff;
+  --c-accent: #b4530a;
+
+  /* Neutros cálidos */
+  --c-bg: #f5f4f0;
+  --c-surface: #ffffff;
+  --c-surface-2: #f0eee8;
+  --c-surface-3: #e8e5dd;
+  --c-border: #e0ddd5;
+  --c-border-strong: #c9c5bb;
+  --c-text: #1d1b18;
+  --c-text-2: #55514b;
+  --c-text-3: #7d786f;
+  --c-overlay: rgb(20 18 15 / 0.45);
+
+  /* Semánticos */
+  --c-success: #16794a;
+  --c-success-soft: #e3f3ea;
+  --c-warning: #a35a07;
+  --c-warning-soft: #fcf0dc;
+  --c-danger: #b42318;
+  --c-danger-soft: #fbe8e6;
+  --c-info: #1f5bc7;
+  --c-info-soft: #e7eefc;
+  --c-neutral-soft: #ecebe6;
+
+  /* Tipografía */
+  --font-ui: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.8125rem;
+  --fs-md: 0.9375rem;
+  --fs-lg: 1.0625rem;
+  --fs-xl: 1.375rem;
+  --fs-2xl: 1.75rem;
+  --fs-3xl: 2.5rem;
+  --lh-tight: 1.2;
+  --lh: 1.5;
+
+  /* Espaciado (escala 4px) */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.25rem;
+  --sp-6: 1.5rem;
+  --sp-8: 2rem;
+  --sp-10: 2.5rem;
+  --sp-12: 3rem;
+
+  /* Forma y profundidad */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-pill: 999px;
+  --shadow-1: 0 1px 2px rgb(29 27 24 / 0.06), 0 1px 1px rgb(29 27 24 / 0.04);
+  --shadow-2: 0 4px 12px rgb(29 27 24 / 0.08), 0 1px 3px rgb(29 27 24 / 0.06);
+  --shadow-3: 0 18px 48px rgb(29 27 24 / 0.18), 0 4px 12px rgb(29 27 24 / 0.08);
+  --focus-ring: 0 0 0 3px rgb(14 107 92 / 0.35);
+
+  /* Movimiento */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --t-fast: 120ms;
+  --t-med: 220ms;
+
+  /* Layout */
+  --sidebar-w: 248px;
+  --sidebar-w-collapsed: 68px;
+  --topbar-h: 60px;
+  --content-max: 1360px;
+}
+
+/* Oscuro: por preferencia del sistema, salvo que el usuario eligiera claro. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --c-primary: #3db39d;
+    --c-primary-hover: #52c4ae;
+    --c-primary-press: #2f9a86;
+    --c-primary-soft: rgb(61 179 157 / 0.14);
+    --c-primary-ink: #06221d;
+    --c-accent: #f0a050;
+    --c-bg: #111312;
+    --c-surface: #181b1a;
+    --c-surface-2: #1f2321;
+    --c-surface-3: #2a2f2c;
+    --c-border: #2b302d;
+    --c-border-strong: #3d4440;
+    --c-text: #eceae4;
+    --c-text-2: #b5b1a8;
+    --c-text-3: #8a867e;
+    --c-overlay: rgb(0 0 0 / 0.6);
+    --c-success: #4cc488;
+    --c-success-soft: rgb(76 196 136 / 0.14);
+    --c-warning: #f0b44c;
+    --c-warning-soft: rgb(240 180 76 / 0.14);
+    --c-danger: #f2766b;
+    --c-danger-soft: rgb(242 118 107 / 0.14);
+    --c-info: #7aa5f5;
+    --c-info-soft: rgb(122 165 245 / 0.14);
+    --c-neutral-soft: rgb(236 234 228 / 0.08);
+    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-2: 0 4px 14px rgb(0 0 0 / 0.45);
+    --shadow-3: 0 18px 48px rgb(0 0 0 / 0.6);
+    --focus-ring: 0 0 0 3px rgb(61 179 157 / 0.45);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --c-primary: #3db39d;
+  --c-primary-hover: #52c4ae;
+  --c-primary-press: #2f9a86;
+  --c-primary-soft: rgb(61 179 157 / 0.14);
+  --c-primary-ink: #06221d;
+  --c-accent: #f0a050;
+  --c-bg: #111312;
+  --c-surface: #181b1a;
+  --c-surface-2: #1f2321;
+  --c-surface-3: #2a2f2c;
+  --c-border: #2b302d;
+  --c-border-strong: #3d4440;
+  --c-text: #eceae4;
+  --c-text-2: #b5b1a8;
+  --c-text-3: #8a867e;
+  --c-overlay: rgb(0 0 0 / 0.6);
+  --c-success: #4cc488;
+  --c-success-soft: rgb(76 196 136 / 0.14);
+  --c-warning: #f0b44c;
+  --c-warning-soft: rgb(240 180 76 / 0.14);
+  --c-danger: #f2766b;
+  --c-danger-soft: rgb(242 118 107 / 0.14);
+  --c-info: #7aa5f5;
+  --c-info-soft: rgb(122 165 245 / 0.14);
+  --c-neutral-soft: rgb(236 234 228 / 0.08);
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-2: 0 4px 14px rgb(0 0 0 / 0.45);
+  --shadow-3: 0 18px 48px rgb(0 0 0 / 0.6);
+  --focus-ring: 0 0 0 3px rgb(61 179 157 / 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --t-fast: 0ms;
+    --t-med: 0ms;
+  }
+}

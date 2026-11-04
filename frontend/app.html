@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' http://127.0.0.1:8000 http://localhost:8000; frame-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="color-scheme" content="light dark">
+  <title>Factu</title>
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/pos.css">
+  <link rel="stylesheet" href="css/pages/pages.css">
+  <script src="js/theme-init.js"></script>
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <div class="app" id="app" hidden>
+    <aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+      <a class="brand" href="#/" aria-label="Factu, ir al inicio">
+        <span class="brand__mark"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h9l3 3v13H6z"/><path d="M9 10h6M9 14h6M9 18h3"/><path d="M15 4v3h3"/></svg></span>
+        <span class="brand__name">Factu<span>.</span></span>
+      </a>
+      <nav aria-label="Secciones">
+        <ul class="nav" id="nav"></ul>
+      </nav>
+      <div class="sidebar__footer hide-mobile">
+        <button class="nav__link btn--block" type="button" id="btn-colapsar" aria-label="Contraer o expandir la barra lateral">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v14H4zM9 5v14"/></svg>
+          <span class="nav__label">Contraer menú</span>
+        </button>
+      </div>
+    </aside>
+    <div class="nav-backdrop" id="nav-backdrop"></div>
+
+    <div class="main">
+      <header class="topbar">
+        <button class="btn btn--ghost btn--icon show-mobile" type="button" id="btn-menu" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="false">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div class="topbar__search" id="buscador" role="search"></div>
+        <div class="row" id="acciones-usuario"></div>
+      </header>
+      <main class="content" id="contenido" tabindex="-1"></main>
+    </div>
+  </div>
+</body>
+</html>

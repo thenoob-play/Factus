@@ -1,0 +1,70 @@
+/* Estilos específicos de páginas (dashboard, facturas, caja, reportes) e impresión */
+.quick-actions { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+
+.list-plain { margin: 0; padding: 0; list-style: none; }
+
+.list-plain li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-5);
+  border-bottom: 1px solid var(--c-border);
+  font-size: var(--fs-sm);
+}
+
+.list-plain li:last-child { border-bottom: 0; }
+.list-plain a { color: inherit; text-decoration: none; }
+.list-plain a:hover .cell-main { color: var(--c-primary); }
+
+.rank {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: var(--c-surface-2);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--c-text-2);
+}
+
+.cufe {
+  display: block;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--r-sm);
+  background: var(--c-surface-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  overflow-wrap: anywhere;
+}
+
+.dian-qr { width: 148px; height: 148px; padding: 6px; border: 1px solid var(--c-border); border-radius: var(--r-md); background: #fff; image-rendering: pixelated; }
+
+.pdf-frame { width: 100%; height: 72vh; border: 0; border-radius: var(--r-md); background: var(--c-surface-2); }
+
+.diff { font-weight: 800; font-variant-numeric: tabular-nums; }
+.diff--ok { color: var(--c-success); }
+.diff--bad { color: var(--c-danger); }
+
+.error-page { display: grid; place-items: center; min-height: 60vh; }
+
+/* Buscador global */
+.global-results { min-width: 100%; }
+
+/* ============================================================ impresión */
+.print-only { display: none; }
+
+@media print {
+  @page { margin: 12mm; }
+
+  body { background: #fff; color: #000; font-size: 11pt; }
+  .sidebar, .topbar, .no-print, .toasts, .nav-backdrop { display: none; }
+  .app { display: block; }
+  .content { padding: 0; max-width: none; }
+  .card { border: 0; box-shadow: none; }
+  .print-only { display: block; }
+  .pay, .grid--2 { display: block; }
+}

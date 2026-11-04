@@ -1,0 +1,100 @@
+.login {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.login__aside {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--sp-10);
+  overflow: hidden;
+  color: #f3f1ea;
+  background:
+    radial-gradient(1200px 600px at -10% 110%, rgb(255 255 255 / 0.08), transparent 60%),
+    radial-gradient(700px 500px at 110% -10%, rgb(240 160 80 / 0.22), transparent 60%),
+    #0b4f44;
+}
+
+.login__aside .brand { padding: 0; color: inherit; }
+.login__aside .brand__mark { background: #f3f1ea; color: #0b4f44; }
+.login__aside .brand__name span { color: #f0b46e; }
+
+.login__pitch { position: relative; z-index: 1; max-width: 400px; }
+
+.login__pitch h1 {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  letter-spacing: -0.03em;
+  margin-bottom: var(--sp-4);
+}
+
+.login__pitch p { color: rgb(243 241 234 / 0.78); font-size: var(--fs-lg); }
+
+.login__features {
+  display: grid;
+  gap: var(--sp-3);
+  margin: var(--sp-8) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.login__features li { display: flex; align-items: center; gap: var(--sp-3); color: rgb(243 241 234 / 0.9); }
+
+.login__features svg {
+  flex: none;
+  padding: 6px;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgb(255 255 255 / 0.1);
+}
+
+/* Recibo decorativo */
+.login__receipt {
+  position: absolute;
+  right: 44px;
+  bottom: 84px;
+  width: 232px;
+  padding: var(--sp-5);
+  border-radius: 10px;
+  background: #f7f5ef;
+  color: #2a2722;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  transform: rotate(-6deg);
+  box-shadow: 0 30px 60px rgb(0 0 0 / 0.35);
+  opacity: 0.92;
+}
+
+.login__receipt p { display: flex; justify-content: space-between; padding: 3px 0; }
+.login__receipt hr { border: 0; border-top: 1px dashed #b9b2a3; margin: 8px 0; }
+.login__receipt strong { font-size: 14px; }
+
+.login__legal { font-size: var(--fs-xs); color: rgb(243 241 234 / 0.55); }
+
+.login__main {
+  display: grid;
+  place-items: center;
+  padding: var(--sp-8) var(--sp-4);
+  background: var(--c-bg);
+}
+
+.login__card { width: min(400px, 100%); }
+.login__card h2 { font-size: var(--fs-2xl); letter-spacing: -0.02em; }
+.login__card .lead { margin: var(--sp-2) 0 var(--sp-8); color: var(--c-text-3); }
+
+.login__theme { position: absolute; top: var(--sp-4); right: var(--sp-4); }
+
+/* Sin espacio para el recibo decorativo junto al texto. */
+@media (max-width: 1240px), (max-height: 760px) {
+  .login__receipt { display: none; }
+}
+
+@media (max-width: 900px) {
+  .login { grid-template-columns: minmax(0, 1fr); }
+  .login__aside { padding: var(--sp-6) var(--sp-5); min-height: auto; }
+  .login__pitch h1 { font-size: var(--fs-xl); margin: var(--sp-4) 0 var(--sp-2); }
+  .login__pitch p, .login__features, .login__receipt, .login__legal { display: none; }
+}

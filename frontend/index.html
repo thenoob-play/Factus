@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' http://127.0.0.1:8000 http://localhost:8000; frame-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="color-scheme" content="light dark">
+  <title>Iniciar sesión · Factu</title>
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/login.css">
+  <script src="js/theme-init.js"></script>
+  <script type="module" src="js/login.js"></script>
+</head>
+<body>
+  <main class="login">
+    <section class="login__aside" aria-hidden="true">
+      <div class="brand">
+        <span class="brand__mark" id="logo-marca"></span>
+        <span class="brand__name">Factu<span>.</span></span>
+      </div>
+
+      <div class="login__pitch">
+        <h1>Vende, cobra y factura ante la DIAN sin salir de la caja.</h1>
+        <p>Punto de venta con pagos verificables y facturación electrónica a través de Factus.</p>
+        <ul class="login__features">
+          <li id="f1">Pagos con firma de integridad: el monto no se puede alterar.</li>
+          <li id="f2">Efectivo, transferencia Bre-B y tarjeta en un solo flujo.</li>
+          <li id="f3">Factura electrónica emitida automáticamente al aprobar el pago.</li>
+        </ul>
+      </div>
+
+      <div class="login__receipt">
+        <p><span>SETP990000128</span><span>FE</span></p>
+        <hr>
+        <p><span>Café molido 500 g ×2</span><span>37.800</span></p>
+        <p><span>Leche entera 1 L ×3</span><span>13.500</span></p>
+        <p><span>IVA 5%</span><span>2.565</span></p>
+        <hr>
+        <p><strong>TOTAL</strong><strong>$ 53.865</strong></p>
+        <p><span>CUFE</span><span>a91f…3c7e</span></p>
+      </div>
+
+      <p class="login__legal">Facturación electrónica validada por la DIAN mediante Factus.</p>
+    </section>
+
+    <section class="login__main">
+      <div class="login__theme" id="tema"></div>
+      <div class="login__card">
+        <h2>Iniciar sesión</h2>
+        <p class="lead">Ingresa con tu correo y contraseña de trabajador.</p>
+        <div id="aviso" aria-live="polite"></div>
+        <form id="form-login" class="form" novalidate>
+          <div class="field" data-campo="email">
+            <label class="field__label" for="email">Correo electrónico</label>
+            <input class="input" id="email" name="email" type="email" autocomplete="username" required aria-describedby="email-error" autofocus>
+            <p class="field__error" id="email-error" aria-live="polite"></p>
+          </div>
+          <div class="field" data-campo="password">
+            <label class="field__label" for="password">Contraseña</label>
+            <div class="input-group">
+              <input class="input" id="password" name="password" type="password" autocomplete="current-password" required aria-describedby="password-error">
+              <button class="btn btn--ghost btn--icon input-group__btn" type="button" id="ver-password" aria-label="Mostrar contraseña" aria-pressed="false"></button>
+            </div>
+            <p class="field__error" id="password-error" aria-live="polite"></p>
+          </div>
+          <button class="btn btn--primary btn--lg btn--block" type="submit" id="entrar">Entrar</button>
+        </form>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

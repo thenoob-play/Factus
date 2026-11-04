@@ -1,0 +1,74 @@
+-- MySQL dump 10.13  Distrib 8.0.45, for Win64 (x86_64)
+--
+-- Host: localhost    Database: factus
+-- ------------------------------------------------------
+-- Server version	9.6.0
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+SET @MYSQLDUMP_TEMP_LOG_BIN = @@SESSION.SQL_LOG_BIN;
+SET @@SESSION.SQL_LOG_BIN= 0;
+
+--
+-- GTID state at the beginning of the backup 
+--
+
+SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ 'd40ec8a6-2467-11f1-b260-489ebdf55486:1-1138';
+
+--
+-- Table structure for table `usuario`
+--
+
+DROP TABLE IF EXISTS `usuario`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `usuario` (
+  `idusuario` int NOT NULL AUTO_INCREMENT,
+  `tipo_persona` enum('natural','juridica') NOT NULL,
+  `tipo_documento` enum('CC','TI','CE') DEFAULT NULL,
+  `numero_documeto_nit` varchar(20) NOT NULL,
+  `nombre` varchar(70) NOT NULL,
+  `correo` varchar(45) NOT NULL,
+  `direccion` varchar(45) NOT NULL,
+  `municipio_departamento` varchar(45) NOT NULL,
+  `telefono_celular` varchar(45) NOT NULL,
+  `rol` enum('trabajador','cliente') NOT NULL,
+  `contraseña` varchar(255) DEFAULT NULL,
+  `correo_trabajdor` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`idusuario`),
+  UNIQUE KEY `numero_documeto_UNIQUE` (`numero_documeto_nit`),
+  UNIQUE KEY `correo_UNIQUE` (`correo`),
+  UNIQUE KEY `telefono_celular_UNIQUE` (`telefono_celular`),
+  UNIQUE KEY `correo_trabajdor_UNIQUE` (`correo_trabajdor`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `usuario`
+--
+
+LOCK TABLES `usuario` WRITE;
+/*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
+INSERT INTO `usuario` VALUES (1,'natural','CC','1002938485','Julian Benavides','julian@gmail.com','Calle 10 # 20-30','Bogotá D.C.','3001234567','cliente',NULL,NULL),(2,'natural','CC','10029312345','Carlos Perez suarez','carlos.trabajador@gmail.com','Calle 45 # 10-20','Bogotá D.C.','3109876543','trabajador','$2b$12$5NbM/H3.hCjv7nH8LJXFUebcHTgcxrVxEogMk1dvlyyhnWLVFoqEi','admin.empresa@gmail.com');
+/*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
+UNLOCK TABLES;
+SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2026-11-04 10:04:29
