@@ -422,3 +422,65 @@ body {
 .badge.vencida { background: var(--agotado-fondo); color: var(--agotado); }
 
 .panel .vacio { margin-top: 12px; }
+/* ===== Estados de carga, error y modo demo (nuevos; no alteran el diseño existente) ===== */
+@keyframes pulso { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+
+.estado { grid-column: 1 / -1; }
+#estado-resumen { margin-bottom: 20px; }
+
+.esqueleto { background: var(--borde); border-radius: 8px; animation: pulso 1.3s ease-in-out infinite; }
+.card-icon.esqueleto { background: var(--borde); }
+.esq-linea { height: 14px; width: 70%; }
+.esq-linea.corta { width: 40%; margin-top: 8px; }
+.esq-linea.ancha { width: 100%; }
+.esq-pildora { width: 84px; height: 24px; border-radius: 999px; }
+
+.stats[aria-busy="true"] .valor,
+.stats[aria-busy="true"] .detalle {
+    color: transparent;
+    background: var(--borde);
+    border-radius: 8px;
+    animation: pulso 1.3s ease-in-out infinite;
+    user-select: none;
+}
+.stats[aria-busy="true"] .valor { width: 55%; }
+.stats[aria-busy="true"] .detalle { width: 75%; }
+
+.vacio.error { border-style: solid; border-color: var(--agotado); }
+.vacio.error strong { color: var(--agotado); }
+
+.btn-reintentar {
+    margin-top: 14px;
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 9px 22px;
+    border: none;
+    border-radius: 999px;
+    background: var(--pino);
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.btn-reintentar:hover { background: var(--pino-claro); }
+
+.banner-demo {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 20;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 14px;
+    font-size: 0.82rem;
+    background: var(--pino-oscuro);
+    color: #e9efed;
+    border: 1px solid var(--ambar);
+    border-radius: 999px;
+}
+.banner-demo a { color: var(--ambar); font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) {
+    .esqueleto, .stats[aria-busy="true"] .valor, .stats[aria-busy="true"] .detalle { animation: none; }
+}

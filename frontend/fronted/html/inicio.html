@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio | Facturación electrónica</title>
+    <meta name="description" content="Panel de facturación electrónica: productos, facturas e indicadores.">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%231f3a33'/%3E%3Cpath d='M7 4h10v16l-2.5-1.7L12 20l-2.5-1.7L7 20z' fill='%23e8a33d'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
-    <script src="../js/app.js" defer></script>
+    <script type="module" src="../js/app.js"></script>
 </head>
-<body>
+<body data-pagina="inicio">
 
     <aside class="sidebar">
         <div class="brand">
@@ -45,18 +47,19 @@
             </div>
         </header>
 
-        <main class="content-area">
+                <main class="content-area">
             <div class="page-head">
                 <h1>Inicio</h1>
-                <p>Resumen de la actividad de hoy, 4 de noviembre.</p>
+                <p>Resumen de la actividad de hoy<span id="fecha-hoy"></span>.</p>
             </div>
             <p class="sr-only" id="resultados-info" role="status" aria-live="polite"></p>
 
-            <section class="stats" aria-label="Indicadores">
-                <article class="card stat"><h2>Ventas de hoy</h2><div class="valor">$1.250.000</div><div class="detalle">2 facturas emitidas hoy</div></article>
-                <article class="card stat"><h2>Por cobrar</h2><div class="valor">$1.193.700</div><div class="detalle">3 facturas, 2 vencidas</div></article>
-                <article class="card stat"><h2>Clientes nuevos</h2><div class="valor">5</div><div class="detalle">Este mes</div></article>
-                <article class="card stat"><h2>Stock bajo</h2><div class="valor">3</div><div class="detalle">1 producto agotado</div></article>
+            <div class="estado" id="estado-resumen" hidden></div>
+            <section class="stats" id="indicadores" aria-label="Indicadores" aria-busy="true">
+                <article class="card stat"><h2>Ventas de hoy</h2><div class="valor" id="ventas-valor">$0</div><div class="detalle" id="ventas-detalle">Cargando</div></article>
+                <article class="card stat"><h2>Por cobrar</h2><div class="valor" id="cobrar-valor">$0</div><div class="detalle" id="cobrar-detalle">Cargando</div></article>
+                <article class="card stat"><h2>Clientes nuevos</h2><div class="valor" id="clientes-valor">0</div><div class="detalle">Este mes</div></article>
+                <article class="card stat"><h2>Stock bajo</h2><div class="valor" id="stock-valor">0</div><div class="detalle" id="stock-detalle">Cargando</div></article>
             </section>
 
             <section class="panel" aria-labelledby="ultimas">
@@ -64,30 +67,10 @@
                 <div class="tabla-wrap">
                     <table class="tabla">
                         <thead><tr><th>Código</th><th>Cliente</th><th>Fecha</th><th class="num">Total</th><th>Estado</th></tr></thead>
-                        <tbody>
-                        <tr data-buscable>
-                            <td class="codigo">FE-0108</td><td>Distribuidora La Sabana</td><td>04/11/2026</td>
-                            <td class="num">$1.250.000</td><td><span class="badge pagada">Pagada</span></td>
-                        </tr>
-                        <tr data-buscable>
-                            <td class="codigo">FE-0107</td><td>Tienda El Vecino</td><td>04/11/2026</td>
-                            <td class="num">$386.500</td><td><span class="badge pendiente">Pendiente</span></td>
-                        </tr>
-                        <tr data-buscable>
-                            <td class="codigo">FE-0106</td><td>Supermercado Los Pinos</td><td>03/11/2026</td>
-                            <td class="num">$2.140.000</td><td><span class="badge pagada">Pagada</span></td>
-                        </tr>
-                        <tr data-buscable>
-                            <td class="codigo">FE-0105</td><td>María Fernanda Ortiz</td><td>02/11/2026</td>
-                            <td class="num">$98.700</td><td><span class="badge pagada">Pagada</span></td>
-                        </tr>
-                        <tr data-buscable>
-                            <td class="codigo">FE-0104</td><td>Restaurante Sabor Sinuano</td><td>28/10/2026</td>
-                            <td class="num">$742.300</td><td><span class="badge vencida">Vencida</span></td>
-                        </tr>
-                        </tbody>
+                        <tbody id="tabla-facturas"></tbody>
                     </table>
                 </div>
+                <div class="estado" id="estado-facturas" hidden></div>
                 <p class="vacio" id="sin-resultados" hidden><strong>No encontramos esa factura</strong>Busca por código o por nombre del cliente.</p>
             </section>
         </main>
