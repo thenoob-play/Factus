@@ -493,7 +493,7 @@ apiFactu/
 └── backend/
     ├── core/                       # Errores uniformes, JWT/roles, rate limit, dinero y fechas
     ├── models/                     # Routers HTTP (auth, gestion, ventas, facturas)
-    ├── shemas/esquemas.py          # Esquemas Pydantic de entrada (extra="forbid")
+    ├── schemas/esquemas.py          # Esquemas Pydantic de entrada (extra="forbid")
     ├── services/                   # Lógica de negocio
     │   ├── servicesVenta.py        #   Cálculo, snapshot, reservas, estados
     │   ├── servicesPago.py         #   Firma, aprobación/rechazo, webhook, caja, expiración

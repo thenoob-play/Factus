@@ -14,7 +14,7 @@ from backend.crudDataBase.configDataBase.dataBase import get_db
 from backend.services import servicesFacturacion, servicesReportes
 from backend.services.factus import catalogos
 from backend.services.factus.cliente import obtener_cliente_factus
-from backend.shemas.esquemas import EnviarEmailIn, NotaCreditoIn, RefrescarCatalogosIn
+from backend.schemas.esquemas import EnviarEmailIn, NotaCreditoIn, RefrescarCatalogosIn
 
 DB = Annotated[Session, Depends(get_db)]
 Pagina = Annotated[int, Query(ge=1)]

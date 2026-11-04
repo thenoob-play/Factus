@@ -7,7 +7,7 @@ from backend.core.rate_limit import ip_cliente
 from backend.core.seguridad import UsuarioActual
 from backend.crudDataBase.configDataBase.dataBase import get_db
 from backend.services import servicesAuth
-from backend.shemas.esquemas import CambiarPasswordIn, LoginIn
+from backend.schemas.esquemas import CambiarPasswordIn, LoginIn
 
 router = APIRouter(prefix="/auth", tags=["Autenticación"])
 DB = Annotated[Session, Depends(get_db)]

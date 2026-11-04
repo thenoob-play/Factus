@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from backend.core.seguridad import SoloAdmin, UsuarioActual
 from backend.crudDataBase.configDataBase.dataBase import get_db
 from backend.services import servicesCliente, servicesProducto, servicesTrabajador
-from backend.shemas.esquemas import (
+from backend.schemas.esquemas import (
     AjusteStockIn,
     ClienteIn,
     ProductoIn,

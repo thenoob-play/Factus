@@ -16,7 +16,7 @@ from backend.crudDataBase.configDataBase.dataBase import get_db
 from backend.services import servicesCaja, servicesPago, servicesVenta
 from backend.services.pagos.proveedores import obtener_wompi
 from backend.services.servicesFacturacion import emitir_en_segundo_plano
-from backend.shemas.esquemas import (
+from backend.schemas.esquemas import (
     AbrirCajaIn,
     CancelarVentaIn,
     CerrarCajaIn,
